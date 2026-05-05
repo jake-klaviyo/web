@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Fifth Layer — Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Source+Serif+4:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    background: #F5F3EE;
+    color: #1a1a1a;
+    line-height: 1.6;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+  }
+
+  /* ── Left Sidebar ── */
+  .sidebar {
+    width: 48px;
+    background: #F5F3EE;
+    border-right: 1px solid #e5e0d8;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 14px 0;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+
+  .sidebar-icon {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    cursor: pointer;
+    color: #8b8580;
+    transition: background 0.15s;
+  }
+
+  .sidebar-icon:hover { background: #ebe7e0; }
+  .sidebar-icon.active { color: #1a1a1a; }
+
+  .sidebar-icon svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+  .sidebar-spacer { flex: 1; }
+
+  .sidebar-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #c4956a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: #fff;
+    cursor: pointer;
+  }
+
+  /* ── Main Area ── */
+  .main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* ── Top Bar ── */
+  .topbar {
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    border-bottom: 1px solid #e5e0d8;
+    flex-shrink: 0;
+    background: #F5F3EE;
+  }
+
+  .topbar-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: #1a1a1a;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .topbar-title svg { width: 16px; height: 16px; color: #8b8580; stroke: currentColor; fill: none; stroke-width: 2; }
+
+  .topbar-share {
+    font-size: 13px;
+    font-weight: 500;
+    color: #1a1a1a;
+    background: #fff;
+    border: 1px solid #d8d3cc;
+    padding: 5px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
+  /* ── Chat Scroll Area ── */
+  .chat-scroll {
+    flex: 1;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+  }
+
+  .chat-scroll::-webkit-scrollbar { width: 6px; }
+  .chat-scroll::-webkit-scrollbar-track { background: transparent; }
+  .chat-scroll::-webkit-scrollbar-thumb { background: #d0cbc4; border-radius: 3px; }
+
+  .chat-container {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 24px 16px 40px;
+  }
+
+  /* ── Step Annotations (subtle) ── */
+  .step-annotation {
+    text-align: center;
+    margin: 32px 0 20px;
+  }
+
+  .step-annotation span {
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #b0a99f;
+  }
+
+  /* ── User Message ── */
+  .user-msg {
+    margin-bottom: 24px;
+  }
+
+  .user-bubble {
+    background: #2F2A25;
+    color: #F0EDE8;
+    padding: 16px 20px;
+    border-radius: 16px;
+    font-size: 15px;
+    line-height: 1.65;
+    font-family: 'Source Serif 4', Georgia, serif;
+  }
+
+  .user-bubble .pasted-block {
+    background: #3d3732;
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-top: 12px;
+    font-size: 14px;
+    color: #c8c2b8;
+    line-height: 1.6;
+  }
+
+  .user-bubble .pasted-block .p-title {
+    color: #e8e4de;
+    font-weight: 600;
+    font-size: 15px;
+    margin-bottom: 8px;
+  }
+
+  .user-bubble .pasted-block .p-truncated {
+    color: #8b8580;
+    font-style: italic;
+    margin-top: 8px;
+    font-size: 13px;
+  }
+
+  .user-bubble p { margin-bottom: 10px; }
+  .user-bubble p:last-child { margin-bottom: 0; }
+  .user-bubble strong { color: #fff; font-weight: 600; }
+
+  /* ── Claude Message ── */
+  .claude-msg {
+    margin-bottom: 8px;
+  }
+
+  .claude-body {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 15.5px;
+    line-height: 1.75;
+    color: #2c2924;
+  }
+
+  .claude-body h3 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 17px;
+    font-weight: 700;
+    color: #1a1714;
+    margin-top: 22px;
+    margin-bottom: 8px;
+  }
+
+  .claude-body h3:first-child { margin-top: 0; }
+
+  .claude-body p { margin-bottom: 14px; }
+  .claude-body p:last-child { margin-bottom: 0; }
+
+  .claude-body strong {
+    font-weight: 700;
+    color: #1a1714;
+  }
+
+  .claude-body em {
+    font-style: italic;
+  }
+
+  /* ── Thinking / Tool Use Indicator ── */
+  .thinking-line {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 0;
+    margin-bottom: 12px;
+    cursor: pointer;
+    color: #9b9590;
+    font-size: 13.5px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+  }
+
+  .thinking-line svg {
+    width: 16px;
+    height: 16px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 2;
+    transform: rotate(0deg);
+    transition: transform 0.2s;
+    flex-shrink: 0;
+  }
+
+  /* ── Claim Tags ── */
+  .claim-tag {
+    display: inline-block;
+    padding: 1px 8px;
+    border-radius: 5px;
+    font-size: 11.5px;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    vertical-align: middle;
+    margin-left: 4px;
+  }
+
+  .tag-generic { background: #fde8e8; color: #c53030; }
+  .tag-shallow { background: #fef3c7; color: #92400e; }
+  .tag-specific { background: #d1fae5; color: #065f46; }
+
+  /* ── Human Gate Card ── */
+  .gate-card {
+    background: #EDEAE4;
+    border-radius: 14px;
+    padding: 22px 24px;
+    margin: 14px 0;
+  }
+
+  .gate-intro {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 14.5px;
+    color: #4a453e;
+    margin-bottom: 18px;
+    line-height: 1.65;
+    font-style: italic;
+  }
+
+  .gate-q {
+    margin-bottom: 16px;
+  }
+
+  .gate-q:last-child { margin-bottom: 0; }
+
+  .gate-q .q-main {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: #1a1714;
+    margin-bottom: 4px;
+  }
+
+  .gate-q .q-sub {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 13.5px;
+    color: #6b6560;
+    line-height: 1.6;
+  }
+
+  /* ── Blockquote ── */
+  .claude-body blockquote {
+    border-left: 3px solid #c4b5a0;
+    padding: 10px 16px;
+    margin: 14px 0;
+    background: #EDEAE4;
+    border-radius: 0 10px 10px 0;
+    font-size: 14px;
+    color: #4a453e;
+    line-height: 1.65;
+  }
+
+  .claude-body blockquote strong {
+    color: #2c2924;
+  }
+
+  /* ── Angle Cards ── */
+  .angle-card {
+    background: #EDEAE4;
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin: 14px 0;
+  }
+
+  .angle-card .a-title {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-weight: 700;
+    font-size: 15px;
+    color: #1a1714;
+    margin-bottom: 8px;
+  }
+
+  .angle-card .a-body {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 14.5px;
+    color: #3a3530;
+    line-height: 1.7;
+    margin-bottom: 10px;
+  }
+
+  .angle-card .a-trace {
+    font-size: 12.5px;
+    font-family: 'Inter', sans-serif;
+    color: #8b8580;
+    padding-top: 10px;
+    border-top: 1px solid #ddd8d0;
+  }
+
+  .angle-card .a-trace em {
+    color: #6b6560;
+    font-style: italic;
+  }
+
+  /* ── Choice Prompt ── */
+  .choice-prompt {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 15px;
+    font-style: italic;
+    color: #4a453e;
+    margin-top: 18px;
+    padding: 14px 0;
+    text-align: center;
+  }
+
+  /* ── Reflection Box ── */
+  .reflection-box {
+    background: #EDEAE4;
+    border-radius: 14px;
+    padding: 22px 24px;
+    margin: 14px 0;
+  }
+
+  .reflection-box p {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 14.5px;
+    color: #3a3530;
+    line-height: 1.7;
+    margin-bottom: 12px;
+  }
+
+  .reflection-box p:last-child { margin-bottom: 0; }
+
+  .reflection-box .r-question {
+    font-style: italic;
+    color: #6b6560;
+    padding-top: 12px;
+    border-top: 1px solid #ddd8d0;
+  }
+
+  /* ── Action Buttons ── */
+  .action-bar {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    padding: 6px 0 20px;
+  }
+
+  .action-btn {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    cursor: pointer;
+    color: #b0a99f;
+    transition: all 0.15s;
+  }
+
+  .action-btn:hover { background: #e8e4de; color: #6b6560; }
+  .action-btn svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* ── Scroll-to-bottom ── */
+  .scroll-down {
+    position: fixed;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 36px;
+    height: 36px;
+    background: #fff;
+    border: 1px solid #d8d3cc;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    color: #6b6560;
+    z-index: 50;
+    transition: opacity 0.2s;
+  }
+
+  .scroll-down svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; }
+
+  /* ── Bottom Input Area ── */
+  .input-area {
+    padding: 12px 20px 10px;
+    flex-shrink: 0;
+    display: flex;
+    justify-content: center;
+    background: #F5F3EE;
+  }
+
+  .input-box {
+    max-width: 700px;
+    width: 100%;
+    background: #fff;
+    border: 1px solid #d8d3cc;
+    border-radius: 16px;
+    padding: 14px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .input-placeholder {
+    font-size: 15px;
+    color: #b0a99f;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .input-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .input-plus {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    color: #8b8580;
+    cursor: pointer;
+  }
+
+  .input-plus svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+
+  .input-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .model-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: #6b6560;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+  }
+
+  .model-label .model-name { color: #2c2924; font-weight: 600; }
+  .model-label svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; }
+
+  .send-btn {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #2c2924;
+    border-radius: 10px;
+    color: #F5F3EE;
+    cursor: pointer;
+  }
+
+  .send-btn svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; }
+
+  .footer-disclaimer {
+    text-align: center;
+    padding: 6px 0 10px;
+    font-size: 12px;
+    color: #b0a99f;
+    background: #F5F3EE;
+  }
+
+  /* ── Divider line between user/assistant turns ── */
+  .turn-divider {
+    border: none;
+    border-top: 1px solid #e5e0d8;
+    margin: 4px 0 24px;
+  }
+
+  /* ── Demo banner ── */
+  .demo-banner-top {
+    background: #E8E4DD;
+    text-align: center;
+    padding: 8px;
+    font-size: 12px;
+    color: #8b8580;
+    font-weight: 500;
+    flex-shrink: 0;
+    letter-spacing: 0.3px;
+  }
+
+  .demo-banner-top strong { color: #6b6560; }
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="sidebar">
+  <div class="sidebar-icon">
+    <svg><line x1="3" y1="3" x2="3" y2="3"/><path d="M4 4h12M4 4v12a2 2 0 002 2h8a2 2 0 002-2V8l-4-4H6a2 2 0 00-2 2z"/></svg>
+  </div>
+  <div class="sidebar-icon">
+    <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+  </div>
+  <div class="sidebar-icon">
+    <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg>
+  </div>
+  <div class="sidebar-icon active">
+    <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+  </div>
+  <div class="sidebar-icon">
+    <svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+  </div>
+  <div class="sidebar-icon">
+    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+  </div>
+  <div class="sidebar-icon">
+    <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+  </div>
+  <div class="sidebar-icon">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+  </div>
+  <div class="sidebar-spacer"></div>
+  <div class="sidebar-icon">
+    <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+  </div>
+  <div class="sidebar-avatar">JS</div>
+</div>
+
+<!-- Main Content -->
+<div class="main">
+
+  <div class="demo-banner-top"><strong>THE FIFTH LAYER</strong> &mdash; Example conversation showing the full plugin workflow</div>
+
+  <div class="topbar">
+    <div class="topbar-title">
+      Personalization blog post — Fifth Layer review
+      <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <button class="topbar-share">Share</button>
+  </div>
+
+  <div class="chat-scroll">
+    <div class="chat-container">
+
+      <!-- ═══ STEP 1: USER INPUT ═══ -->
+      <div class="step-annotation"><span>Step 1 — Input</span></div>
+
+      <div class="user-msg">
+        <div class="user-bubble">
+          Run this through The Fifth Layer:
+          <div class="pasted-block">
+            <div class="p-title">Why Personalization Is the Future of Email Marketing</div>
+            <p>In 2026, consumers expect more from the brands they interact with. Generic batch-and-blast emails are a thing of the past. Today's most successful marketers are leveraging AI-powered personalization to deliver the right message to the right person at the right time.</p>
+            <p>Personalization isn't just a nice-to-have — it's a business imperative. Brands that invest in personalization see up to 3x higher engagement rates and significantly improved customer lifetime value...</p>
+            <div class="p-truncated">[~1,200 words continuing in this vein]</div>
+          </div>
+        </div>
+      </div>
+
+      <hr class="turn-divider">
+
+      <!-- ═══ STEP 2: CLAIM STRIPPING ═══ -->
+      <div class="step-annotation"><span>Step 2 — Claim Stripping</span></div>
+
+      <div class="claude-msg">
+        <div class="thinking-line">
+          Analyzed content claims and ran substitution test across 8 sections
+          <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+        <div class="claude-body">
+
+          <h3>The actual claim</h3>
+          <p>This piece argues that AI-powered email personalization is now table stakes for serious marketers, and that brands not investing in it will lose to those that do. It's a "the future is here, get on board" argument — a call to adoption, not a specific how-to or a contrarian take.</p>
+
+          <h3>The substitution test</h3>
+          <p>Testing three representative paragraphs (chosen because they carry the piece's core assertions — the opening frame, the ROI argument, and the strategy section):</p>
+
+          <p><strong>"In 2026, consumers expect more from the brands they interact with..."</strong> <span class="claim-tag tag-generic">Generic</span><br>
+          Any ESP — Braze, Iterable, Mailchimp, Salesforce — could publish this paragraph verbatim. No proprietary data, no named customer, no distinctive claim. This is the consensus view of the category.</p>
+
+          <p><strong>"Personalization isn't just a nice-to-have — it's a business imperative..."</strong> <span class="claim-tag tag-generic">Generic</span><br>
+          "Up to 3x higher engagement" with no source, no named brand, no methodology. This is the kind of stat that floats around the industry untethered from any original study. A competitor could — and almost certainly has — written the same sentence.</p>
+
+          <p><strong>"With Klaviyo's predictive analytics, marketers can anticipate customer needs..."</strong> <span class="claim-tag tag-shallow">Branded but shallow</span><br>
+          Mentions Klaviyo by name and references predictive analytics, but the underlying claim — "our tool predicts what customers want" — is what every platform in the category says. Swap "Klaviyo" for "Braze" and "predictive analytics" for "predictive intelligence" and you have their blog post.</p>
+
+          <p>The remaining paragraphs follow the same pattern. Roughly 80% generic, 20% branded-but-shallow. No paragraphs qualify as genuinely specific.</p>
+
+          <h3>The so-what</h3>
+          <p>This piece is doing almost nothing for the reader that they couldn't get from any competitor's content marketing or from asking ChatGPT "why does email personalization matter." It restates the category consensus without adding proprietary evidence, a distinctive point of view, or a specific customer story. The piece isn't bad — it's just substitutable. A reader who encounters it will nod along and forget it, because nothing in it belongs specifically to Klaviyo or to the author's actual experience.</p>
+
+        </div>
+      </div>
+
+      <div class="action-bar">
+        <div class="action-btn"><svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></div>
+        <div class="action-btn"><svg viewBox="0 0 24 24"><path d="M14 9V5a3 3 0 00-6 0v1"/><path d="M18 14v4a2 2 0 01-2 2H5a2 2 0 01-2-2V9a2 2 0 012-2h1"/><path d="M2 12h6l2-3h4l2 3h6"/></svg></div>
+        <div class="action-btn"><svg viewBox="0 0 24 24"><path d="M7 10v12"/><path d="M15 5.88L14 10h5.83a2 2 0 011.92 2.56l-2.33 8A2 2 0 0117.5 22H4a2 2 0 01-2-2v-8a2 2 0 012-2h2.76a2 2 0 001.79-1.11L12 2a3.13 3.13 0 013 3.88z"/></svg></div>
+        <div class="action-btn"><svg viewBox="0 0 24 24"><path d="M7 10v12"/><path d="M15 5.88L14 10h5.83a2 2 0 011.92 2.56l-2.33 8A2 2 0 0117.5 22H4a2 2 0 01-2-2v-8a2 2 0 012-2h2.76a2 2 0 001.79-1.11L12 2a3.13 3.13 0 013 3.88z" transform="rotate(180 12 12)"/></svg></div>
+        <div class="action-btn"><svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg></div>
+      </div>
+
+      <!-- User acknowledges -->
+      <div class="user-msg">
+        <div class="user-bubble">
+          Ouch. But yeah, that's fair. Ok what's next?
+        </div>
+      </div>
+
+      <hr class="turn-divider">
+
+      <!-- ═══ STEP 3: HUMAN GATE ═══ -->
+      <div class="step-annotation"><span>Step 3 — Human Gate</span></div>
+
+      <div class="claude-msg">
+        <div class="thinking-line">
+          Preparing contribution gate — 3 questions for human input
+          <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+        <div class="claude-body">
+
+          <div class="gate-card">
+            <div class="gate-intro">The next step needs something from you that I can't generate — your actual perspective. There are no wrong answers. Short is fine. But the more specific and honest you are, the more useful everything downstream becomes. If you skip this or phone it in, the rest of the workflow produces generic output. That's by design.</div>
+
+            <div class="gate-q">
+              <div class="q-main">1. What do you know about this topic that isn't in any document?</div>
+              <div class="q-sub">Not what you've read — what you've lived. A customer conversation that stuck with you. Something you've observed in your own buying behavior. A pattern you've noticed that nobody's written down yet.</div>
+            </div>
+
+            <div class="gate-q">
+              <div class="q-main">2. What have you encountered recently that connects to this — even loosely?</div>
+              <div class="q-sub">A podcast episode. A conversation at dinner. Something a competitor did that caught your eye. An experience you had as a consumer. The connection doesn't have to be logical.</div>
+            </div>
+
+            <div class="gate-q">
+              <div class="q-main">3. What's your honest gut reaction to this piece?</div>
+              <div class="q-sub">Not "is it good." What do you actually feel when you read it? Would you send it to a friend who works at a competitor, or would you rather they didn't see it?</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="action-bar">
+        <div class="action-btn"><svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></div>
+        <div class="action-btn"><svg viewBox="0 0 24 24"><path d="M7 10v12"/><path d="M15 5.88L14 10h5.83a2 2 0 011.92 2.56l-2.33 8A2 2 0 0117.5 22H4a2 2 0 01-2-2v-8a2 2 0 012-2h2.76a2 2 0 001.79-1.11L12 2a3.13 3.13 0 013 3.88z"/></svg></div>
+        <div class="action-btn"><svg viewBox="0 0 24 24"><path d="M7 10v12"/><path d="M15 5.88L14 10h5.83a2 2 0 011.92 2.56l-2.33 8A2 2 0 0117.5 22H4a2 2 0 01-2-2v-8a2 2 0 012-2h2.76a2 2 0 001.79-1.11L12 2a3.13 3.13 0 013 3.88z" transform="rotate(180 12 12)"/></svg></div>
+        <div class="action-btn"><svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg></div>
+      </div>
+
+      <!-- User answers the gate -->
+      <div class="user-msg">
+        <div class="user-bubble">
+          <p><strong>1.</strong> I was on a call last week with a DTC skincare brand, maybe 40k subscribers. They told me they turned OFF most of their personalization flows because customers started complaining it felt "creepy." Their words: "it's like the brand knows too much about me." They went back to simpler segmentation — just purchase history and browse behavior — and their unsubscribe rate dropped. I keep thinking about that because everything we publish says "more personalization = better" and here's a real customer saying the opposite.</p>
+
+          <p><strong>2.</strong> I listened to a Lenny's Podcast episode where the guest — I think she was from Linear — talked about how the best products are "opinionated" rather than "personalized." The argument was that trying to be everything to everyone makes you nothing to anyone. It was about product design, not email, but it stuck with me because it's the exact opposite of what we tell marketers to do.</p>
+
+          <p><strong>3.</strong> Honestly? I wouldn't send this to anyone. It reads like a blog post we had to publish, not one we wanted to publish. If I saw this with a Braze logo on it I wouldn't blink. I don't think it's making anyone think differently about anything. It's just... there.</p>
+        </div>
+      </div>
+
+      <hr class="turn-divider">
+
+      <!-- ═══ STEP 4: COUNTER AND DIVERGE ═══ -->
+      <div class="step-annotation"><span>Step 4 — Counter-Argument & Divergent Angles</span></div>
+
+      <div class="claude-msg">
+        <div class="thinking-line">
+          Generated counter-argument and 3 divergent angles from human contribution
+          <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+        <div class="claude-body">
+
+          <blockquote>
+            <strong>Your contribution, verbatim:</strong><br><br>
+            <strong>1.</strong> "I was on a call last week with a DTC skincare brand, maybe 40k subscribers. They told me they turned OFF most of their personalization flows because customers started complaining it felt 'creepy.' Their words: 'it's like the brand knows too much about me.' They went back to simpler segmentation — just purchase history and browse behavior — and their unsubscribe rate dropped..."<br><br>
+            <strong>2.</strong> "I listened to a Lenny's Podcast episode where the guest — I think she was from Linear — talked about how the best products are 'opinionated' rather than 'personalized.'..."<br><br>
+            <strong>3.</strong> "Honestly? I wouldn't send this to anyone. It reads like a blog post we had to publish, not one we wanted to publish..."
+          </blockquote>
+
+          <h3>The counter-argument</h3>
+          <p>A working marketer who's read this piece would say: "This is the same personalization pitch I've been hearing since 2019. You're telling me AI-powered personalization is the future, but I've been 'implementing AI-powered personalization' for three years and my open rates are flat. The problem isn't that I don't believe personalization works in theory — it's that the gap between 'deliver the right message at the right time' and actually doing it with real data, real resource constraints, and real customers who find it unsettling is enormous. This piece pretends that gap doesn't exist." The piece's core vulnerability is that it advocates for a thing at the exact moment practitioners are discovering its limits. It's behind the conversation its own readers are having.</p>
+
+          <h3>Three divergent angles</h3>
+
+          <div class="angle-card">
+            <div class="a-title">Angle 1: "The Personalization Backlash Is Real — Here's What Smart Brands Are Doing Instead"</div>
+            <div class="a-body">Lead with the skincare brand story. Not as an anomaly but as a signal. The piece becomes an honest reckoning with the fact that more personalization isn't always better — and that the brands getting the best results in 2026 are the ones who figured out where to stop. The argument shifts from "personalize everything" to "personalize deliberately." This is a piece Klaviyo can write that Braze cannot, because it requires admitting the limits of the thing you sell — which only a market leader confident in its position can afford to do.</div>
+            <div class="a-trace">Traces to: <em>your skincare brand call — "customers started complaining it felt creepy"</em></div>
+          </div>
+
+          <div class="angle-card">
+            <div class="a-title">Angle 2: "What If Email Marketing Needs Opinions, Not Personalization?"</div>
+            <div class="a-body">Take the Linear/Lenny's insight and apply it to email. What if the brands that win aren't the ones that personalize the hardest, but the ones with the strongest editorial point of view? A brand that sends the same bold, opinionated email to every subscriber — and means it — might outperform one that sends twelve algorithmically-optimized variants that say nothing. This reframes Klaviyo not as a personalization engine but as a platform that helps brands develop and express a voice. It's contrarian, it's arguable, and it's a position nobody in the ESP space is taking.</div>
+            <div class="a-trace">Traces to: <em>your Lenny's Podcast reference — "opinionated rather than personalized"</em></div>
+          </div>
+
+          <div class="angle-card">
+            <div class="a-title">Angle 3: Kill the Blog Post. Publish the Customer Call Instead.</div>
+            <div class="a-body">Don't write about personalization at all. Instead, publish an edited transcript of a real conversation with a customer who turned personalization off and got better results. No framing, no "what this means for marketers," no thought-leadership packaging. Just the conversation. Let the reader sit with the dissonance. This isn't a blog post — it's a piece of evidence. It would be the most-shared thing on Klaviyo's blog because it's the one piece of content that proves the company is listening to what's actually happening rather than publishing what the content calendar says is due.</div>
+            <div class="a-trace">Traces to: <em>your gut reaction — "it reads like a blog post we had to publish, not one we wanted to publish"</em></div>
+          </div>
+
+          <p class="choice-prompt">These are real options, not a menu to pick from politely. Which direction pulls you? Or did reading these surface a fourth idea that's better than all of them?</p>
+
+        </div>
+      </div>
+
+      <div class="action-bar">
+        <div class="action-btn"><svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></div>
+        <div class="action-btn"><svg viewBox="0 0 24 24"><path d="M7 10v12"/><path d="M15 5.88L14 10h5.83a2 2 0 011.92 2.56l-2.33 8A2 2 0 0117.5 22H4a2 2 0 01-2-2v-8a2 2 0 012-2h2.76a2 2 0 001.79-1.11L12 2a3.13 3.13 0 013 3.88z"/></svg></div>
+        <div class="action-btn"><svg viewBox="0 0 24 24"><path d="M7 10v12"/><path d="M15 5.88L14 10h5.83a2 2 0 011.92 2.56l-2.33 8A2 2 0 0117.5 22H4a2 2 0 01-2-2v-8a2 2 0 012-2h2.76a2 2 0 001.79-1.11L12 2a3.13 3.13 0 013 3.88z" transform="rotate(180 12 12)"/></svg></div>
+        <div class="action-btn"><svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg></div>
+      </div>
+
+      <!-- ═══ STEP 5: HUMAN DECISION ═══ -->
+      <div class="step-annotation"><span>Step 5 — Human Decision</span></div>
+
+      <div class="user-msg">
+        <div class="user-bubble">
+          <p>Angle 3 hit me in the chest. We would literally never do that — publish a customer conversation where the takeaway is "we used less of the product and it worked better." But that's exactly why it would work. It's the most honest thing we could publish.</p>
+
+          <p>But I think there's a version that combines 1 and 3. What if it's the customer conversation, but with a short framing intro that acknowledges the backlash is real and positions Klaviyo as the platform that helps you figure out where the line is — not one that just pushes you to do more? Like, the tool is powerful enough that you can choose restraint. That's a flex, not a concession.</p>
+        </div>
+      </div>
+
+      <hr class="turn-divider">
+
+      <!-- ═══ STEP 6: REFLECTION ═══ -->
+      <div class="step-annotation"><span>Step 6 — Reflection</span></div>
+
+      <div class="claude-msg">
+        <div class="thinking-line">
+          Reflecting on what the human's contribution changed
+          <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+        <div class="claude-body">
+
+          <div class="reflection-box">
+            <p>Without your input, this workflow would have produced a counter-argument about personalization fatigue — that's findable in any industry blog. The thing that changed the output was a specific customer call you had last Tuesday. That call — a 40k-subscriber skincare brand turning off flows because customers said "it's like the brand knows too much about me" — became the foundation of every divergent angle. No competitor running this same workflow with a different human would have produced these options, because they didn't take that call.</p>
+
+            <p>The final direction — publishing an honest customer conversation framed by a confident admission that more isn't always better — is non-substitutable. It requires a company willing to publish evidence against its own pitch, which requires market-leader confidence. A challenger brand can't afford that candor. The "restraint as a flex" framing came from you, not from the workflow, and it's the thing that makes the piece publishable rather than just provocative.</p>
+
+            <p class="r-question">The honest question: is this direction actually better — or does it just feel better because it's braver? Bravery and effectiveness aren't the same thing. Sit with that.</p>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="action-bar">
+        <div class="action-btn"><svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></div>
+        <div class="action-btn"><svg viewBox="0 0 24 24"><path d="M7 10v12"/><path d="M15 5.88L14 10h5.83a2 2 0 011.92 2.56l-2.33 8A2 2 0 0117.5 22H4a2 2 0 01-2-2v-8a2 2 0 012-2h2.76a2 2 0 001.79-1.11L12 2a3.13 3.13 0 013 3.88z"/></svg></div>
+        <div class="action-btn"><svg viewBox="0 0 24 24"><path d="M7 10v12"/><path d="M15 5.88L14 10h5.83a2 2 0 011.92 2.56l-2.33 8A2 2 0 0117.5 22H4a2 2 0 01-2-2v-8a2 2 0 012-2h2.76a2 2 0 001.79-1.11L12 2a3.13 3.13 0 013 3.88z" transform="rotate(180 12 12)"/></svg></div>
+        <div class="action-btn"><svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Bottom Input -->
+  <div class="input-area">
+    <div class="input-box">
+      <div class="input-placeholder">Write a message...</div>
+      <div class="input-bottom">
+        <div class="input-plus">
+          <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </div>
+        <div class="input-right">
+          <div class="model-label">
+            <span class="model-name">Opus 4.6</span>
+            Extended
+            <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="send-btn">
+            <svg viewBox="0 0 24 24"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="footer-disclaimer">Claude is AI and can make mistakes. Please double-check responses.</div>
+
+</div>
+
+</body>
+</html>
