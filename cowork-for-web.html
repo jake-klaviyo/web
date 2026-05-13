@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cowork for webpage work — quick guide for Carolyn</title>
+<style>
+  :root {
+    --bg: #fafaf7;
+    --card: #ffffff;
+    --ink: #1a1a1a;
+    --muted: #6b6b6b;
+    --line: #e5e3dc;
+    --accent: #2563eb;
+    --green: #2f8a4f;
+    --green-bg: #e8f4ec;
+    --amber: #b06b00;
+    --amber-bg: #fbf0d9;
+    --gray: #5a5a5a;
+    --gray-bg: #ececec;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.55;
+  }
+  .wrap {
+    max-width: 740px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+  }
+  .meta {
+    font-size: 13px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 8px;
+  }
+  h1 {
+    font-size: 28px;
+    font-weight: 600;
+    margin: 0 0 12px;
+    line-height: 1.2;
+  }
+  .pitch {
+    color: var(--ink);
+    margin-bottom: 36px;
+    font-size: 16px;
+  }
+  h2 {
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin: 32px 0 12px;
+  }
+  h2:first-of-type { margin-top: 0; }
+  details {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    margin-bottom: 8px;
+    overflow: hidden;
+  }
+  summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    user-select: none;
+  }
+  summary::-webkit-details-marker { display: none; }
+  summary::after {
+    content: "+";
+    margin-left: auto;
+    font-size: 20px;
+    color: var(--muted);
+    line-height: 1;
+  }
+  details[open] summary::after { content: "−"; }
+  summary:hover { background: #f6f5ef; }
+  .pill {
+    display: inline-block;
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 100px;
+    white-space: nowrap;
+  }
+  .pill-ready { background: var(--green-bg); color: var(--green); }
+  .pill-setup { background: var(--amber-bg); color: var(--amber); }
+  .pill-idea { background: var(--gray-bg); color: var(--gray); }
+  .label {
+    font-weight: 500;
+    font-size: 15.5px;
+    flex: 1;
+  }
+  .body {
+    padding: 0 18px 16px 18px;
+    color: var(--ink);
+    font-size: 14.5px;
+  }
+  .body p { margin: 0 0 10px; }
+  .body p:last-child { margin-bottom: 0; }
+  .body .caveat {
+    margin-top: 8px;
+    padding: 8px 12px;
+    border-left: 3px solid var(--amber);
+    background: #fffaf0;
+    color: var(--ink);
+    font-size: 13.5px;
+  }
+  .primer {
+    margin-top: 36px;
+  }
+  .primer summary {
+    background: transparent;
+    border: 1px dashed var(--line);
+    border-radius: 6px;
+  }
+  .primer ul { margin: 6px 0 0; padding-left: 18px; }
+  .primer li { margin-bottom: 8px; }
+  .primer strong { font-weight: 600; }
+  code {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 13px;
+    background: #f0eee6;
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+  .footer {
+    margin-top: 28px;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+    color: var(--muted);
+    font-size: 13.5px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="meta">From Claude · for Carolyn</div>
+  <h1>Cowork for Klaviyo's webpage workflow</h1>
+  <p class="pitch">Most of the friction in Creative's webpage work — comparing Figma to live, finding typos, keeping locales in sync, copying copy from Figma into Sanity — is the kind of thing Cowork can either do today or do once a small amount of setup is in place. Here's the practical list, in three buckets: ready right now, ready with a little setup, and bigger ideas worth testing.</p>
+
+  <h2>Ready today</h2>
+
+  <details>
+    <summary>
+      <span class="pill pill-ready">Ready</span>
+      <span class="label">Compare a Figma mockup to the live page (or Sanity preview)</span>
+    </summary>
+    <div class="body">
+      <p>Tell Cowork "compare this Figma file to /products/social" and it pulls the page content from Sanity, pulls the text from Figma, and surfaces every place they diverge — headlines, body, bullets, FAQ Q&A, customer quote.</p>
+      <p>Accuracy is roughly 90% on the Figma side today. Catches drift between what was designed and what shipped.</p>
+      <div class="caveat">Caveat: Figma text nodes don't carry CTA URLs or image alt text. You'll get CTA labels but not destinations — those still need a manual check, or the Figma naming convention fix in the next section.</div>
+    </div>
+  </details>
+
+  <details>
+    <summary>
+      <span class="pill pill-ready">Ready</span>
+      <span class="label">Pull a clean copy of any page (no nav, no footer, no popups)</span>
+    </summary>
+    <div class="body">
+      <p>"Give me the content of /products/sms as Markdown." Cowork pulls structured text from Sanity — just the authored sections, ordered, with headings, bullets, CTAs. Useful for stakeholder reviews, brand audits, sending copy to translators, or anything where you'd otherwise be selecting-and-copying from a live page.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>
+      <span class="pill pill-ready">Ready</span>
+      <span class="label">Run brand voice and product messaging checks on page copy</span>
+    </summary>
+    <div class="body">
+      <p>The brand-voice and product-messaging skills are already wired up. "Check the copy on /products/social against brand voice" runs every section through the rules and flags off-tone phrases, misused product naming (Marketing Agent vs. marketing agent), or stale positioning. Same idea works on a draft before publishing.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>
+      <span class="pill pill-ready">Ready</span>
+      <span class="label">SEO check on any page</span>
+    </summary>
+    <div class="body">
+      <p>"Does /products/social have a title, meta description, OG image, canonical URL, and robots tag?" Cowork reads what's actually being served and reports back. Useful right before pushing live or auditing the site quarterly.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>
+      <span class="pill pill-ready">Ready</span>
+      <span class="label">Link audit — every link on a page works and behaves correctly</span>
+    </summary>
+    <div class="body">
+      <p>"Check every link on /products/social. Flag any that don't resolve, and any that point to a different subdomain (like help.klaviyo.com) but aren't set to open in a new tab." Cowork pulls the link list from Sanity and verifies behavior via a browser. Done in one pass.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>
+      <span class="pill pill-ready">Ready</span>
+      <span class="label">Find placeholder copy that shouldn't ship</span>
+    </summary>
+    <div class="body">
+      <p>Catches "Lorem ipsum," "Button CTA," "Pending," "Headline ipsum dolor," and FAQs that look copy-pasted from another product page. For example, the social Figma we tested has FAQ items that are clearly leftover from the analytics page ("What is linear multi-touch attribution?"). Worth running on any page right before launch.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>
+      <span class="pill pill-ready">Ready</span>
+      <span class="label">Translation parity — which locales are behind</span>
+    </summary>
+    <div class="body">
+      <p>"For /products/social, which of the 8 locales haven't been updated since the en-US version changed?" Cowork checks the Sanity update timestamp per locale and reports which are stale. Your social page is currently six weeks behind on de-DE, es-ES, fr-FR, and it-IT.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>
+      <span class="pill pill-ready">Ready</span>
+      <span class="label">Adversarial double-check</span>
+    </summary>
+    <div class="body">
+      <p>Once Cowork has done a task, say "have a second agent critically review the result." It catches things the first pass missed — Jake mentioned this one and it's the most reliable accuracy boost across any of these workflows. Worth making a habit.</p>
+    </div>
+  </details>
+
+  <h2>Ready with a little setup</h2>
+
+  <details>
+    <summary>
+      <span class="pill pill-setup">Small setup</span>
+      <span class="label">Edit Sanity directly from chat (typo fixes, copy tweaks)</span>
+    </summary>
+    <div class="body">
+      <p>"Fix the typo on /products/social — 'engagment' should be 'engagement.'" Cowork finds the document, makes the edit on a draft (never directly on published), shows you a diff, you approve in Sanity Studio. Kills the copy-paste-from-Figma loop for small fixes.</p>
+      <p><strong>What's needed:</strong> Jake to enable Sanity write permissions on the connector with drafts-only routing. ~30 minutes of setup. No designer/creative-side work required.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>
+      <span class="pill pill-setup">Small setup</span>
+      <span class="label">Page health dashboard you reopen</span>
+    </summary>
+    <div class="body">
+      <p>One artifact that re-fetches on open and shows, across every marketing-prod page: locale staleness, broken or missing-target-blank links, missing alt text, missing SEO fields, placeholder copy that didn't get replaced, FAQs with "Pending" answers. Status at a glance.</p>
+      <p><strong>What's needed:</strong> ~2 hours for Claude to build the artifact, plus a quick review of what you want surfaced. No ongoing maintenance — it pulls fresh data each time.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>
+      <span class="pill pill-setup">Medium setup</span>
+      <span class="label">Figma naming conventions for webpage mockups</span>
+    </summary>
+    <div class="body">
+      <p>A few small Figma habits make AI parsing of webpage mockups go from ~90% to ~99% accurate and let it capture things it currently can't (CTA URLs, image alt). Suggested conventions:</p>
+      <p>• Name section frames by type: <code>[hero]</code>, <code>[switchback]</code>, <code>[carousel]</code>, <code>[accordion]</code> — matching the Sanity component names.<br>
+      • Layer prefixes for role: <code>h1/</code>, <code>h2/</code>, <code>body/</code>, <code>eyebrow/</code>, <code>cta/</code>, <code>bullet/</code>, <code>badge/</code>.<br>
+      • Put nav/footer mockups on a separate Figma page named "Reference — chrome." Page-content frames stay clean.<br>
+      • Use one canonical "final" version per page (the <code>↳ SH Review 1 | 04.29.26</code> stacking makes "which one is the source of truth" ambiguous).<br>
+      • One placeholder sentinel — <code>{{LOREM}}</code>, <code>{{CTA-TEXT}}</code>, <code>{{URL}}</code> — instead of mixed "Lorem ipsum" / "Button CTA" / "Pending."<br>
+      • For CTAs and image alt: use Figma Dev Resources to attach the destination URL and alt text to each node. That's the cleanest fix for the structural gap.</p>
+      <p><strong>What's needed:</strong> Creative team alignment on conventions, then a one-time pass on the template. Designers, not Claude. Pays off forever after that.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>
+      <span class="pill pill-setup">Small setup</span>
+      <span class="label">A Klaviyo-specific Sanity skill</span>
+    </summary>
+    <div class="body">
+      <p>A small reference doc Claude reads at the start of any Sanity task. Tells it where things live (marketing-prod for marketing pages, help-center-prod for docs, global-prod for shared chrome), how our component types are structured, common queries we run. Means Claude doesn't have to rediscover the schema every session.</p>
+      <p><strong>What's needed:</strong> ~1–2 hours for Claude to draft, plus a quick review. After that every Sanity task is faster and less error-prone.</p>
+    </div>
+  </details>
+
+  <h2>Bigger ideas worth testing</h2>
+
+  <details>
+    <summary>
+      <span class="pill pill-idea">Idea</span>
+      <span class="label">Draft a new Sanity page from a Figma file</span>
+    </summary>
+    <div class="body">
+      <p>Once Figma naming conventions are in, Cowork can read a mockup section by section, map each to a Sanity component, stub the document with Portable Text bodies, set CTAs and slug, and place asset placeholders. You review the draft in Sanity Studio before publishing. Replaces most of the manual Figma-to-Sanity step.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>
+      <span class="pill pill-idea">Idea</span>
+      <span class="label">Pre-launch checklist for every new page draft</span>
+    </summary>
+    <div class="body">
+      <p>Interactive checklist that runs against any draft before publishing — SEO ✓, links ✓, alt coverage ✓, all locales drafted ✓, brand-voice score ≥ threshold ✓, no placeholders ✓. Stops "we forgot to update the canonical URL" type misses.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>
+      <span class="pill pill-idea">Idea</span>
+      <span class="label">Localized variant drafter</span>
+    </summary>
+    <div class="body">
+      <p>When en-US updates, pre-stub the other seven locales — through the brand-voice rules — so translators start from a real draft instead of a blank doc. Cuts translation lag at the data layer rather than the human layer.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>
+      <span class="pill pill-idea">Idea</span>
+      <span class="label">Scheduled Figma ↔ Sanity drift watcher</span>
+    </summary>
+    <div class="body">
+      <p>Weekly job that compares Figma frame text against the matching Sanity doc and posts a digest of what diverged that week. Catches drift before it ships rather than during a stakeholder review.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>
+      <span class="pill pill-idea">Idea</span>
+      <span class="label">Cross-page reuse and consistency report</span>
+    </summary>
+    <div class="body">
+      <p>"This FAQ appears verbatim on six product pages — should this be a single shared block?" "Our switchback heading sizes drift across pages — here are the three outliers." Useful for cleanup passes.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>
+      <span class="pill pill-idea">Idea</span>
+      <span class="label">On-demand page brief</span>
+    </summary>
+    <div class="body">
+      <p>"Give me the brief on /products/sms." Returns: section outline, live screenshot, SEO snapshot, brand-voice score, locale status, recent edit history. The "I'm new to this page or coming back to it, give me 30 seconds of context" tool.</p>
+    </div>
+  </details>
+
+  <div class="primer">
+    <details>
+      <summary>
+        <span class="label">A two-minute primer on the moving parts (optional)</span>
+      </summary>
+      <div class="body">
+        <ul>
+          <li><strong>Cowork vs Chat.</strong> Both are Claude. Cowork is the desktop app — can read files, run multi-step tasks, call connectors. Chat is the web version — better for quick questions, one-off rewrites, brainstorms. Rule of thumb: file or multi-step task → Cowork. Quick lookup → Chat.</li>
+          <li><strong>Connectors.</strong> Plug Claude into our actual tools — Sanity, Figma, Slack, Google Drive, etc. No copy-paste required. Each connector has different powers; today the relevant ones for webpage work are Sanity, Figma, and Chrome.</li>
+          <li><strong>Three ways Claude can read a page, in plain terms:</strong>
+            <ul>
+              <li><em>Sanity</em> — "give me what's in the CMS." Cleanest for any copy task. Sees all 8 locales at once. Doesn't see nav/footer/global chrome (which is intentional — those live in a different dataset).</li>
+              <li><em>Chrome</em> — "give me what a visitor actually sees, rendered." Best for behavior checks, screenshots, anything client-side (chat widget, A/B tests).</li>
+              <li><em>web_fetch</em> — "give me a quick text snapshot of a URL." Best for SEO meta tag checks and one-off lookups.</li>
+            </ul>
+          </li>
+          <li><strong>Skills/plugins.</strong> Pre-written context that teaches Claude how to handle a specific task without you re-explaining each time. The brand-voice skill teaches our voice rules; figma-creative-reader teaches it how to parse creative Figma files; a Klaviyo Sanity skill would teach it our schema.</li>
+        </ul>
+      </div>
+    </details>
+  </div>
+
+  <div class="footer">
+    Happy to scaffold any of the "small setup" items — the page health dashboard, the Sanity skill, or a test run of the Figma-vs-live comparison on whatever page is mid-update. — Claude
+  </div>
+
+</div>
+</body>
+</html>
